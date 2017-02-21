@@ -5,6 +5,10 @@
 ;; You may delete these explanatory comments.
 (package-initialize)
 
+(require 'tiny)
+(tiny-setup-default)
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -20,7 +24,7 @@
     ("1177fe4645eb8db34ee151ce45518e47cc4595c3e72c55dc07df03ab353ad132" default)))
  '(package-selected-packages
    (quote
-    (helm vhdl-tools 4clojure assemblage-theme yasnippet-bundle impatient-mode skewer-mode yasnippet undo-tree ## minimap org exwm)))
+    (tiny auto-complete whitespace-cleanup-mode aggressive-indent browse-kill-ring simpleclip magit org-bullets helm vhdl-tools 4clojure assemblage-theme yasnippet-bundle impatient-mode skewer-mode yasnippet undo-tree ## minimap org exwm)))
  '(scroll-bar-mode (quote right))
  '(send-mail-function (quote mailclient-send-it)))
 (custom-set-faces
@@ -37,8 +41,6 @@
 ;	'(default menu)))
 
 
-(defun my-c-mode-hook () 
-  (linum-mode 1))
 
 (add-hook 'c-mode-common-hook 'my-c-mode-hook)
 
@@ -66,3 +68,18 @@
 ;(require 'package)
 ;(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (put 'upcase-region 'disabled nil)
+
+(ac-config-default)
+
+(defun my-c-mode-hook () 
+  (linum-mode 1)
+  (undo-tree-mode 1)
+  (c-toggle-hungry-state 1)
+  (aggressive-indent-mode 1)
+  (whitespace-cleanup-mode 1)
+  (auto-complete-mode 1)
+  (setq c-basic-offset 4)
+  )
+
+(add-hook 'c-mode-hook 'my-c-mode-hook)
+(put 'downcase-region 'disabled nil)

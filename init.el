@@ -40,6 +40,13 @@
 (defun my-c-mode-hook () 
   (linum-mode 1))
 
+(add-hook 'c-mode-common-hook 'my-c-mode-hook)
+
+(defun my-org-mode-hook ()
+  (org-bullets-mode))
+
+(add-hook 'org-mode-hook 'my-org-mode-hook)
+
 ;;key bindings
 (global-set-key ( kbd "C-c { " )  'insert-pair)
 (global-set-key ( kbd "C-c [ " )  'insert-pair)

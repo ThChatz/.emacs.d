@@ -7,7 +7,11 @@
 
 (require 'tiny)
 (tiny-setup-default)
-
+(require 'ox)
+(require 'impatient-mode)
+(require 'aggressive-indent)
+(require 'yasnippet)
+(require 'undo-tree)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -24,7 +28,7 @@
     ("1177fe4645eb8db34ee151ce45518e47cc4595c3e72c55dc07df03ab353ad132" default)))
  '(package-selected-packages
    (quote
-    (tiny auto-complete whitespace-cleanup-mode aggressive-indent browse-kill-ring simpleclip magit org-bullets helm vhdl-tools 4clojure assemblage-theme yasnippet-bundle impatient-mode skewer-mode yasnippet undo-tree ## minimap org exwm)))
+    (tiny auto-complete whitespace-cleanup-mode aggressive-indent browse-kill-ring simpleclip magit org-bullets helm vhdl-tools 4clojure assemblage-theme impatient-mode skewer-mode yasnippet undo-tree ## minimap org exwm)))
  '(scroll-bar-mode (quote right))
  '(send-mail-function (quote mailclient-send-it)))
 (custom-set-faces
@@ -61,16 +65,20 @@
                          ("marmalade" . "https://marmalade-repo.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")))
 
-(package-refresh-contents)
+;;(package-refresh-contents)		;;uncomment and eval if needed
 (add-to-list 'load-path "~/.emacs.d/lisp/*")
-;;(progn (cd "~/.emacs.d/lisp/")
-;;       (normal-top-level-add-subdirs-to-load-path)) 
-;(require 'package)
-;(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+
+;; enable commands here
 (put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+
+
+(yas-global-mode 1)
+;;(yas-load-directory "~/.emacs.d/snippets/")
+(setq yas-snippet-dirs "~/.emacs.d/snippets/")
 
 (ac-config-default)
-
+;; C-mode configuration
 (defun my-c-mode-hook () 
   (linum-mode 1)
   (undo-tree-mode 1)
@@ -82,4 +90,25 @@
   )
 
 (add-hook 'c-mode-hook 'my-c-mode-hook)
-(put 'downcase-region 'disabled nil)
+
+
+
+;; configuration for org-mode latex rendering
+(org-export-define-backend 'latex
+  :options-alist '((:date "DATE" nil "\\today" t)
+                   (:date-format nil nil org-latex-date-timestamp-format)
+                   (:latex-class "LATEX_CLASS" nil org-latex-default-class t)
+                   (:latex-class-options "LATEX_CLASS_OPTIONS" nil nil t)
+                   (:latex-header-extra "LATEX_HEADER" nil nil newline)
+                   (:latex-hyperref-p nil "texht" org-latex-with-hyperref t)))
+
+;; make rendered font readable
+(plist-put org-format-latex-options :scale 1.4)
+
+(defun my-org-mode-hook()
+  (linum-mode 1)
+  (undo-tree-mode 1)
+  (org-bullets-mode 1)
+  )
+
+(add-hook 'org-mode-hook 'my-org-mode-hook)

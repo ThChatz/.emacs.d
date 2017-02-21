@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: matrix
+# key:matrix
+# --
+\left ${1:\(} \begin{matrix} $1  \end{matrix} \right ${2:\)}

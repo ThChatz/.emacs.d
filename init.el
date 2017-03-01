@@ -44,7 +44,9 @@
 ;	  (put face 'face-defface-spec spec))
 ;	'(default menu)))
 
-
+;;disable menu and tool bars
+(menu-bar-mode 0)
+(tool-bar-mode 0)
 
 (add-hook 'c-mode-common-hook 'my-c-mode-hook)
 

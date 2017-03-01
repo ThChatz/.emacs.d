@@ -44,7 +44,16 @@
 ;	  (put face 'face-defface-spec spec))
 ;	'(default menu)))
 
+;;disable menu and tool bars
+(menu-bar-mode 0)
+(tool-bar-mode 0)
 
+(add-hook 'c-mode-common-hook 'my-c-mode-hook)
+
+(defun my-org-mode-hook ()
+  (org-bullets-mode))
+
+(add-hook 'org-mode-hook 'my-org-mode-hook)
 
 ;;key bindings
 (global-set-key ( kbd "C-c { " )  'insert-pair)

@@ -87,13 +87,15 @@
 
 
 ;; configuration for org-mode latex rendering
-(org-export-define-backend 'latex
-  :options-alist '((:date "DATE" nil "\\today" t)
-                   (:date-format nil nil org-latex-date-timestamp-format)
-                   (:latex-class "LATEX_CLASS" nil org-latex-default-class t)
-                   (:latex-class-options "LATEX_CLASS_OPTIONS" nil nil t)
-                   (:latex-header-extra "LATEX_HEADER" nil nil newline)
-                   (:latex-hyperref-p nil "texht" org-latex-with-hyperref t)))
+(org-export-define-backend 'xetex
+   :export-options '((subtree body-only visible-only))
+   :options-alist '((:date "DATE" nil "\\today" t)
+                    (:date-format nil nil org-latex-date-timestamp-format)
+                    (:latex-class "LATEX_CLASS" nil org-latex-default-class t)
+                    (:latex-class-options "LATEX_CLASS_OPTIONS" nil nil t)
+                    (:latex-header-extra "LATEX_HEADER" nil nil newline)
+ 		   (:latex-hyperref-p nil "texht" org-latex-with-hyperref t)
+		   ))
 
 ;; make rendered font readable
 (plist-put org-format-latex-options :scale 1.4)

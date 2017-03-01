@@ -12,6 +12,8 @@
 (require 'aggressive-indent)
 (require 'yasnippet)
 (require 'undo-tree)
+(require 'electric-spacing)
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -28,7 +30,7 @@
     ("1177fe4645eb8db34ee151ce45518e47cc4595c3e72c55dc07df03ab353ad132" default)))
  '(package-selected-packages
    (quote
-    (tiny auto-complete whitespace-cleanup-mode aggressive-indent browse-kill-ring simpleclip magit org-bullets helm vhdl-tools 4clojure assemblage-theme impatient-mode skewer-mode yasnippet undo-tree ## minimap org exwm)))
+    (electric-spacing tiny auto-complete whitespace-cleanup-mode aggressive-indent browse-kill-ring simpleclip magit org-bullets helm vhdl-tools 4clojure assemblage-theme impatient-mode skewer-mode yasnippet undo-tree ## minimap org exwm)))
  '(scroll-bar-mode (quote right))
  '(send-mail-function (quote mailclient-send-it)))
 (custom-set-faces
@@ -48,20 +50,16 @@
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 
+;; electric pair mode
+(electric-pair-mode 1)
+
+
 (add-hook 'c-mode-common-hook 'my-c-mode-hook)
 
 (defun my-org-mode-hook ()
   (org-bullets-mode))
 
 (add-hook 'org-mode-hook 'my-org-mode-hook)
-
-;;key bindings
-(global-set-key ( kbd "C-c { " )  'insert-pair)
-(global-set-key ( kbd "C-c [ " )  'insert-pair)
-(global-set-key ( kbd "C-c \' " )  'insert-pair)
-(global-set-key ( kbd "C-c \"" )  'insert-pair)
-(global-set-key ( kbd "C-c (" )  'insert-pair)
-
 
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("marmalade" . "https://marmalade-repo.org/packages/")
@@ -88,8 +86,10 @@
   (aggressive-indent-mode 1)
   (whitespace-cleanup-mode 1)
   (auto-complete-mode 1)
-  (setq c-basic-offset 4)
-  )
+  (electric-spacing-mode 1)
+  (local-set-key ( kbd "DEL" ) 'c-hungry-delete)
+  (c-toggle-auto-newline 1)
+  (setq c-basic-offset 4))
 
 (add-hook 'c-mode-hook 'my-c-mode-hook)
 

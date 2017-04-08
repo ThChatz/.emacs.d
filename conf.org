@@ -1,0 +1,150 @@
+* Theme And Appearance
+  #+BEGIN_SRC emacs-lisp
+    (custom-set-variables
+     '(custom-enabled-themes (quote (assemblage)))
+
+     '(ansi-color-faces-vector
+     [default default default italic underline success warning error])
+     '(ansi-color-names-vector
+     ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
+
+     '(custom-safe-themes
+     (quote
+      ("1177fe4645eb8db34ee151ce45518e47cc4595c3e72c55dc07df03ab353ad132" default))))
+     (let ((spec '((t (:family "Source Code Pro" :height 120)))))
+       (mapc (lambda (face)
+  	    (face-spec-set face spec)
+	    (put face 'face-defface-spec spec))
+   	  '(default menu)))
+      (scroll-bar-mode nil)
+      (menu-bar-mode 0)
+      (tool-bar-mode 0)
+  #+END_SRC
+* Enable Commands And Misc Modifications
+  #+BEGIN_SRC emacs-lisp
+  (put 'upcase-region 'disabled nil)
+  (put 'downcase-region 'disabled nil)
+  
+  (setq dired-isearch-filenames t)
+  (setq delete-by-moving-to-trash t)
+
+  ;; make DEL not treat regions differently
+  (setq delete-active-region 'nil)
+
+  #+END_SRC
+
+* Package Management And Init
+  #+BEGIN_SRC emacs-lisp
+    (require 'package)
+    ;(require 'use-package)
+    (package-initialize)
+    
+
+    (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                             ("marmalade" . "https://marmalade-repo.org/packages/")
+                             ("melpa" . "https://melpa.org/packages/")))
+  #+END_SRC
+** Nlinum
+  #+BEGIN_SRC emacs-lisp
+    (use-package nlinum
+      :ensure t
+      :init (setq nlinum-format " %6d "))
+  #+END_SRC
+** Electric Pair
+  #+BEGIN_SRC emacs-lisp
+    (use-package electric-pair-mode
+      :init (electric-pair-mode 1))
+  #+END_SRC
+** Yasnippet
+  #+BEGIN_SRC emacs-lisp
+    (use-package YASnippet
+      :config (setq yas-snippet-dirs "~/.emacs.d/snippets/")
+      :init (yas-global-mode 1))
+  #+END_SRC
+** Autocomplete
+  #+BEGIN_SRC emacs-lisp
+    (use-package auto-complete
+      :init (ac-config-default))
+
+  #+END_SRC
+** Electric Operator
+  #+BEGIN_SRC emacs-lisp
+    (use-package electric-operator
+      :config (electric-operator-add-rules-for-mode
+  	     'c-mode
+  	     (cons "*" nil)))
+  #+END_SRC
+** Undo Tree
+  #+BEGIN_SRC emacs-lisp
+  (use-package undo-tree)
+  #+END_SRC
+** Aggressive Indent
+  #+BEGIN_SRC emacs-lisp
+    (use-package aggressive-indent)
+  #+END_SRC
+* C Mode Hook
+  #+BEGIN_SRC emacs-lisp
+    (defun my-c-mode-hook () 
+      (nlinum-mode 1)
+      (undo-tree-mode 1)
+      (c-toggle-hungry-state 1)
+      (aggressive-indent-mode 1)
+      (whitespace-cleanup-mode 1)
+      (auto-complete-mode 1)
+      (electric-operator-mode)
+      (local-set-key ( kbd "DEL" ) 'c-hungry-delete)
+      (c-toggle-auto-newline 1)
+      (setq c-basic-offset 4))
+
+    (add-hook 'c-mode-hook 'my-c-mode-hook)
+  #+END_SRC
+* Org Mode Hook
+  #+BEGIN_SRC emacs-lisp
+    (use-package ox)
+      ;; configuration for org-mode latex rendering
+      (org-export-define-backend 'xetex
+         :export-options '((subtree body-only visible-only))
+         :options-alist '((:date "DATE" nil "\\today" t)
+  			(:date-format nil nil org-latex-date-timestamp-format)
+  			(:latex-class "LATEX_CLASS" nil org-latex-default-class t)
+  			(:latex-class-options "LATEX_CLASS_OPTIONS" nil nil t)
+  			(:latex-header-extra "LATEX_HEADER" nil nil newline)
+     		     (:latex-hyperref-p nil "texht" org-latex-with-hyperref t)))
+
+      ;; make rendered font readable
+      (plist-put org-format-latex-options :scale 1.4)
+
+
+      (defun org-insert-R ()
+        (interactive)
+        (insert-char #X211D))
+
+      (defun org-insert-Q ()
+        (interactive)
+        (insert-char #X211A))
+
+      (defun org-insert-N ()
+        (interactive)
+        (insert-char #X2115))
+
+      (defun org-insert-Z ()
+        (interactive)
+        (insert-char #X2124))
+
+      (defun org-insert-l ()
+        (interactive)
+        (insert-char #X2113))
+
+      (defun my-org-mode-hook()
+        (nlinum-mode 1)
+        (undo-tree-mode 1)
+        (org-bullets-mode 1)
+        (local-set-key (kbd "s-r") 'org-insert-R )
+        (local-set-key (kbd "s-q") 'org-insert-Q )
+        (local-set-key (kbd "s-n") 'org-insert-N )
+        (local-set-key (kbd "s-z") 'org-insert-Z )
+        (local-set-key (kbd "s-l") 'org-insert-l ))
+
+
+      (add-hook 'org-mode-hook 'my-org-mode-hook)
+  #+END_SRC

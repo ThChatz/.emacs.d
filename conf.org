@@ -1,8 +1,9 @@
 * Theme And Appearance
   #+BEGIN_SRC emacs-lisp
+
     (custom-set-variables
      '(custom-enabled-themes (quote (assemblage)))
-
+     
      '(ansi-color-faces-vector
      [default default default italic underline success warning error])
      '(ansi-color-names-vector
@@ -44,6 +45,12 @@
                              ("marmalade" . "https://marmalade-repo.org/packages/")
                              ("melpa" . "https://melpa.org/packages/")))
   #+END_SRC
+** Helm
+   #+BEGIN_SRC emacs-lisp
+     (use-package helm
+       :bind (("M-x" . helm-M-x)
+       ("C-x b" . helm-buffers-list)))
+   #+END_SRC
 ** Nlinum
   #+BEGIN_SRC emacs-lisp
     (use-package nlinum
@@ -66,7 +73,16 @@
     (use-package auto-complete
       :init (ac-config-default))
 
+    (use-package ac-clang
+      :config (ac-clang-initialize))
+    (use-package ac-c-headers)
+
   #+END_SRC
+***  Autocomplete-helm
+    #+BEGIN_SRC emacs-lisp
+      (use-package ac-helm
+        :bind (("C-M-i" . ac-complete-with-helm)))
+    #+END_SRC
 ** Electric Operator
   #+BEGIN_SRC emacs-lisp
     (use-package electric-operator
@@ -82,69 +98,100 @@
   #+BEGIN_SRC emacs-lisp
     (use-package aggressive-indent)
   #+END_SRC
+** Ace-Jump
+   #+BEGIN_SRC emacs-lisp
+     (use-package ace-jump
+       :bind (
+           ("M-C" . ace-jump-char-mode)
+   	   ("M-W" . ace-jump-word-mode)))
+   #+END_SRC
+** Icicles
+   #+BEGIN_SRC emacs-lisp
+     (use-package icicles
+       :bind (("C-z" . icy-mode)))
+   #+END_SRC
+   
 * C Mode Hook
   #+BEGIN_SRC emacs-lisp
-    (defun my-c-mode-hook () 
-      (nlinum-mode 1)
-      (undo-tree-mode 1)
-      (c-toggle-hungry-state 1)
-      (aggressive-indent-mode 1)
-      (whitespace-cleanup-mode 1)
-      (auto-complete-mode 1)
-      (electric-operator-mode)
-      (local-set-key ( kbd "DEL" ) 'c-hungry-delete)
-      (c-toggle-auto-newline 1)
-      (setq c-basic-offset 4))
+     (defun my-c-mode-hook () 
+       (nlinum-mode 1)
+       (undo-tree-mode 1)
+       (c-toggle-hungry-state 1)
+       (aggressive-indent-mode 1)
+       (whitespace-cleanup-mode 1)
+       (auto-complete-mode 1)
+       (electric-operator-mode)
+       (local-set-key ( kbd "DEL" ) 'c-hungry-delete)
+       (c-toggle-auto-newline 1)
+       (add-to-list 'ac-sources 'ac-source-c-headers)
+       (add-to-list 'ac-sources 'ac-source-c-header-symbols t)
+    (setq c-basic-offset 4))
 
-    (add-hook 'c-mode-hook 'my-c-mode-hook)
+     (add-hook 'c-mode-hook 'my-c-mode-hook)
   #+END_SRC
 * Org Mode Hook
   #+BEGIN_SRC emacs-lisp
     (use-package ox)
-      ;; configuration for org-mode latex rendering
-      (org-export-define-backend 'xetex
-         :export-options '((subtree body-only visible-only))
-         :options-alist '((:date "DATE" nil "\\today" t)
-  			(:date-format nil nil org-latex-date-timestamp-format)
-  			(:latex-class "LATEX_CLASS" nil org-latex-default-class t)
-  			(:latex-class-options "LATEX_CLASS_OPTIONS" nil nil t)
-  			(:latex-header-extra "LATEX_HEADER" nil nil newline)
-     		     (:latex-hyperref-p nil "texht" org-latex-with-hyperref t)))
+    ;; configuration for org-mode latex rendering
+    (org-export-define-backend 'xetex
+      :export-options '((subtree body-only visible-only))
+      :options-alist '((:date "DATE" nil "\\today" t)
+  		     (:date-format nil nil org-latex-date-timestamp-format)
+  		     (:latex-class "LATEX_CLASS" nil org-latex-default-class t)
+  		     (:latex-class-options "LATEX_CLASS_OPTIONS" nil nil t)
+  		     (:latex-header-extra "LATEX_HEADER" nil  nil  newline)
+  		     (:latex-hyperref-p nil "texht" org-latex-with-hyperref t)))
 
-      ;; make rendered font readable
-      (plist-put org-format-latex-options :scale 1.4)
-
-
-      (defun org-insert-R ()
-        (interactive)
-        (insert-char #X211D))
-
-      (defun org-insert-Q ()
-        (interactive)
-        (insert-char #X211A))
-
-      (defun org-insert-N ()
-        (interactive)
-        (insert-char #X2115))
-
-      (defun org-insert-Z ()
-        (interactive)
-        (insert-char #X2124))
-
-      (defun org-insert-l ()
-        (interactive)
-        (insert-char #X2113))
-
-      (defun my-org-mode-hook()
-        (nlinum-mode 1)
-        (undo-tree-mode 1)
-        (org-bullets-mode 1)
-        (local-set-key (kbd "s-r") 'org-insert-R )
-        (local-set-key (kbd "s-q") 'org-insert-Q )
-        (local-set-key (kbd "s-n") 'org-insert-N )
-        (local-set-key (kbd "s-z") 'org-insert-Z )
-        (local-set-key (kbd "s-l") 'org-insert-l ))
+    ;; fix for printing unicode
+    ;(add-to-list 'org-latex-default-packages-alist '("T1,LGR" "fontenc" t))
+    (add-to-list 'org-latex-default-packages-alist '("" "fontspec" t))
+    ;(add-to-list 'org-latex-default-packages-alist '("english,greek" "babel" t))
 
 
-      (add-hook 'org-mode-hook 'my-org-mode-hook)
+    ;; make rendered font readable
+    (plist-put org-format-latex-options :scale 1.4)
+
+
+
+
+    (setq org-latex-pdf-process
+  	'("xelatex -interaction nonstopmode -output-directory %o %f" "xelatex -interaction nonstopmode -output-directory %o %f" "xelatex -interaction nonstopmode -output-directory %o %f"))
+
+
+    (defun org-insert-R ()
+      (interactive)
+      (insert-char #X211D))
+
+    (defun org-insert-Q ()
+      (interactive)
+      (insert-char #X211A))
+
+    (defun org-insert-N ()
+      (interactive)
+      (insert-char #X2115))
+
+    (defun org-insert-Z ()
+      (interactive)
+      (insert-char #X2124))
+
+    (defun org-insert-l ()
+      (interactive)
+      (insert-char #X2113))
+
+    (defun my-org-mode-hook()
+      (nlinum-mode 1)
+      (undo-tree-mode 1)
+      (org-bullets-mode 1)
+      (local-set-key (kbd "s-r") 'org-insert-R )
+      (local-set-key (kbd "s-q") 'org-insert-Q )
+      (local-set-key (kbd "s-n") 'org-insert-N )
+      (local-set-key (kbd "s-z") 'org-insert-Z )
+      (local-set-key (kbd "s-l") 'org-insert-l ))
+
+
+    (add-hook 'org-mode-hook 'my-org-mode-hook)
   #+END_SRC
+
+
+
+

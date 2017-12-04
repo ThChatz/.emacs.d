@@ -39,7 +39,6 @@
 * Package Management And Init
   #+BEGIN_SRC emacs-lisp
     (require 'package)
-    ;(require 'use-package)
     (package-initialize)
     
 
@@ -50,14 +49,17 @@
 ** Helm
    #+BEGIN_SRC emacs-lisp
      (use-package helm)
-;;       :bind (("M-x" . helm-M-x)
-;;       ("C-x b" . helm-buffers-list)))
+   #+END_SRC
+** Ivy
+   #+BEGIN_SRC emacs-lisp
+   (use-package ivy)
    #+END_SRC
 ** Nlinum
   #+BEGIN_SRC emacs-lisp
     (use-package nlinum
       :ensure t
-      :init (setq nlinum-format "%6d"))
+      :init (setq nlinum-format "%6d"
+      nlinm--width 10))
   #+END_SRC
 ** Electric Pair
   #+BEGIN_SRC emacs-lisp
@@ -141,7 +143,10 @@
    #+BEGIN_SRC emacs-lisp
    (use-package projectile
    :config (prog1 (projectile-mode)
-   (setq projectile-enable-caching t)))
+   (setq projectile-enable-caching t
+   projectile-mode-line
+   '(:eval (format " Projectile[%s]"
+   (projectile-project-name))))))
    #+END_SRC
 ** Flycheck
    #+BEGIN_SRC emacs-lisp
@@ -157,20 +162,30 @@
        (c-toggle-hungry-state 1)
        (aggressive-indent-mode 1)
        (whitespace-cleanup-mode 1)
-       (electric-operator-mode)
        (local-set-key ( kbd "DEL" ) 'c-hungry-delete)
        (c-set-offset 'innamespace 0)
        (c-toggle-auto-newline 1)
        (company-mode 1)
        (irony-mode 1)
        (semantic-mode 1)
-       
+       (semantic-idle-completions-mode 1)
 
-       (set (make-local-variable 'company-backends)
-       '((company-gtags company-irony)))
+
        
        (setq c-basic-offset 4))
-         (add-hook 'c-mode-common-hook 'my-c-common-hook)
+       (add-hook 'c-mode-common-hook 'my-c-common-hook)
+
+       (defun my-c-mode-hook ()
+       (set (make-local-variable 'company-backends)
+       '(company-semantic company-gtags)))
+       
+       (add-hook 'c-mode-hook 'my-c-mode-hook)
+
+       (defun my-cpp-mode-hook ()
+       (set (make-local-variable 'company-backends)
+       '(company-semantic company-gtags)))
+
+       (add-hook 'c++-mode-hook 'my-cpp-mode-hook)
   #+END_SRC
 * Org Mode Hook
   #+BEGIN_SRC emacs-lisp
